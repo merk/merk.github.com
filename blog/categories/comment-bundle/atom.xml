@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: comment-bundle | Tim Nagel]]></title>
+  <link href="http://tim.nagel.com.au/blog/categories/comment-bundle/atom.xml" rel="self"/>
+  <link href="http://tim.nagel.com.au/"/>
+  <updated>2012-05-04T21:17:19+10:00</updated>
+  <id>http://tim.nagel.com.au/</id>
+  <author>
+    <name><![CDATA[Tim Nagel]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Enabling BBCode parsing in FOSCommentBundle]]></title>
+    <link href="http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle"/>
+    <updated>2012-05-04T16:50:00+10:00</updated>
+    <id>http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle</id>
+    <content type="html"><![CDATA[<p>FOSCommentBundle recently added functionality that allows you
+to use some kind of markup parser to let your users post more
+than just plain text comments. The way it is implemented allows
+the developer to choose which parser for whatever language they
+desire.</p>
+
+<p>In this article, we assume you are using Symfony2.0 with the
+deps file and bin/vendor management. For Symfony2.1 users, you
+are able to replace the parts of the instructions with composer,
+which is beyond the scope of this article.</p>
+
+<!-- more -->
+
+
+<p>To be able to use a markup parser, you must be using a commit
+of <code>0fb403c6f1</code> or newer, or the upcoming 1.1.0 version.</p>
+
+<h2>Dependencies</h2>
+
+<p>Because of the way that the BBCode parser we're going to use works,
+we will need to additionally implement a HtmlPurifier to make sure
+that the HTML is safe for displaying. For this, we'll be using
+<a href="https://github.com/Exercise/HTMLPurifierBundle">ExerciseHtmlPurifierBundle</a>. Follow the installation instructions
+provided by this bundle.</p>
+
+<p>Done that?</p>
+
+<p>Next we need to install the BBCode parser, add the following to your
+deps file and autoload.php:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>deps </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="na">&lt;a href</span><span class="o">=</span><span class="s">&quot;http://www.christian-seiler.de/projekte/php/bbcode/index_en.html&quot;&gt;StringParser_BBCode&lt;/a&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">&lt;pre&gt;&lt;code&gt;git</span><span class="o">=</span><span class="s">http://github.com/merk/StringParser_BBCode.git</span>
+</span><span class='line'><span class="na">target</span><span class="o">=</span><span class="s">stringparser-bbcode</span>
+</span><span class='line'><span class="err">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>app/autoload.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">// ...</span>
+</span><span class='line'><span class="x">$loader-&gt;registerPrefixes(array(&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;// ...</span>
+</span><span class='line'><span class="x">&#39;StringParser&#39; =&amp;gt; __DIR__.&#39;/../vendor/stringparser-bbcode/src&#39;,</span>
+</span><span class='line'><span class="x">// ...</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;));</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>And run <code>bin/vendor install</code> to install the parser.</p>
+
+<h2>Configuration</h2>
+
+<p><a href="http://www.christian-seiler.de/projekte/php/bbcode/index_en.html">StringParser_BBCode</a> comes with many different options about how
+to configure it, letting you specify which BBCode tags should be allowed
+and what they will be transformed into.</p>
+
+<p>We will need to set up a service called <code>BBCodeParser</code> that implements
+<a href="https://github.com/FriendsOfSymfony/FOSCommentBundle/blob/master/Markup/ParserInterface.php">ParserInterface</a> from FOSCommentBundle, which has a single method,
+<code>parse</code>. We will use the service we implement to configure our
+StringParser_BBCode class, but you can use whatever method you'd like to
+get an instance of StringParser_BBCode into our new <code>BBCodeParser</code>.</p>
+
+<p>Our example set up will enable [B] and [I] BBCodes, if you need more take
+a look at the documentation provided by <a href="http://www.christian-seiler.de/projekte/php/bbcode/index_en.html">StringParser_BBCode</a>, there
+are more examples provided there.</p>
+
+<p>Below is an example implementation of <code>BBCodeParser</code>, a class that will
+need to be placed inside a bundle in your application. Generally, an
+application will need to have an AppBundle to implement bits and pieces
+required for other bundles.</p>
+
+<p><div><script src='https://gist.github.com/1948617.js?file=BBCode.php'></script>
+<noscript><pre><code>&lt;?php
+
+namespace Test\CommentBundle\Markup;
+
+use FOS\CommentBundle\Markup\ParserInterface;
+use HTMLPurifier;
+
+class BBCode implements ParserInterface
+{
+    private $parser;
+    private $purifier;
+
+    public function __construct(HtmlPurifier $purifier)
+    {
+        $this-&gt;purifier = $purifier;
+    }
+
+    /**
+     * @return \StringParser_BBCode
+     */
+    protected function getParser()
+    {
+        if (null === $this-&gt;parser) {
+            $parser = new \StringParser_BBCode();
+            $parser-&gt;setRootParagraphHandling(true);
+
+            /**
+             * Bold
+             *
+             * [b][/b] -&gt; &lt;b&gt;&lt;/b&gt;
+             */
+            $parser-&gt;addCode('b', 'simple_replace', null, array(
+                'start_tag' =&gt; '&lt;b&gt;',
+                'end_tag' =&gt; '&lt;/b&gt;'
+            ), 'inline', array('listitem', 'block', 'inline', 'link'), array());
+
+            /**
+             * Italics
+             *
+             * [i][/i] -&gt; &lt;i&gt;&lt;/i&gt;
+             */
+            $parser-&gt;addCode('i', 'simple_replace', null, array(
+                'start_tag' =&gt; '&lt;i&gt;',
+                'end_tag' =&gt; '&lt;/i&gt;'
+            ), 'inline', array('listitem', 'block', 'inline', 'link'), array());
+
+            $this-&gt;parser = $parser;
+        }
+
+        return $this-&gt;parser;
+    }
+
+    /**
+     * Takes a markup string and returns raw html.
+     *
+     * @param string $raw
+     *
+     * @return string
+     */
+    public function parse($raw)
+    {
+        $raw = $this-&gt;purifier-&gt;purify($raw);
+
+        return $this-&gt;getParser()-&gt;parse($raw);
+    }
+}</code></pre></noscript></div>
+</p>
+
+<p>Once you've got your <code>BBCoderParser</code> set up the way you want it, you need
+to configure the Symfony2 container to tell it about the parser, and let
+FOSCommentBundle know about it.</p>
+
+<p>The configuration example below sets up the ExerciseHTMLPurifier to
+disallow all HTML, combined with the Parser above, will remove all HTML
+and then convert the BBCode to HTML.</p>
+
+<blockquote><p><strong>Security Risk</strong></p>
+
+<p>You must be careful with the HTMLPurifier configuration so that
+no unexpected HTML gets through the parser. You may expose your website
+to XSS attacks if not properly configured.</p></blockquote>
+
+<p><div><script src='https://gist.github.com/1948617.js?file=config.yml'></script>
+<noscript><pre><code>exercise_html_purifier:
+    bbcode:
+        HTML.Allowed: ''
+
+fos_comment:
+    service:
+        markup: markup.bbcode
+
+services:
+    markup.bbcode:
+        class: Test\CommentBundle\Markup\BBCode
+        arguments:
+            - @exercise_html_purifier.bbcode</code></pre></noscript></div>
+</p>
+
+<p>And you're done. Any comments created from this point onwards will be parsed
+for BBCode and that will be converted to the HTML you've specified.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Enabling BBCode parsing in FOSCommentBundle - Tim Nagel</title>
+  <meta name="author" content="Tim Nagel">
+
+  
+  <meta name="description" content="FOSCommentBundle recently added functionality that allows you
+to use some kind of markup parser to let your users post more
+than just plain text &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tim Nagel" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-31402211-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tim Nagel</a></h1>
+  
+    <h2>A place to experiment</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tim.nagel.com.au" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="http://ozfortress.com">ozfortress</a></li>
+    <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Enabling BBCode Parsing in FOSCommentBundle</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-04T16:50:00+10:00" pubdate data-updated="true">May 4<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>FOSCommentBundle recently added functionality that allows you
+to use some kind of markup parser to let your users post more
+than just plain text comments. The way it is implemented allows
+the developer to choose which parser for whatever language they
+desire.</p>
+
+<p>In this article, we assume you are using Symfony2.0 with the
+deps file and bin/vendor management. For Symfony2.1 users, you
+are able to replace the parts of the instructions with composer,
+which is beyond the scope of this article.</p>
+
+<!-- more -->
+
+
+<p>To be able to use a markup parser, you must be using a commit
+of <code>0fb403c6f1</code> or newer, or the upcoming 1.1.0 version.</p>
+
+<h2>Dependencies</h2>
+
+<p>Because of the way that the BBCode parser we&#8217;re going to use works,
+we will need to additionally implement a HtmlPurifier to make sure
+that the HTML is safe for displaying. For this, we&#8217;ll be using
+<a href="https://github.com/Exercise/HTMLPurifierBundle">ExerciseHtmlPurifierBundle</a>. Follow the installation instructions
+provided by this bundle.</p>
+
+<p>Done that?</p>
+
+<p>Next we need to install the BBCode parser, add the following to your
+deps file and autoload.php:</p>
+
+<figure class='code'><figcaption><span>deps </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[StringParser_BBCode]</span>
+</span><span class='line'>    <span class="na">git</span><span class="o">=</span><span class="s">http://github.com/merk/StringParser_BBCode.git</span>
+</span><span class='line'><span class="s">    target=stringparser-bbcode</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>app/autoload.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'><span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">registerPrefixes</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>    <span class="s1">&#39;StringParser&#39;</span> <span class="o">=&gt;</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/stringparser-bbcode/src&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And run <code>bin/vendor install</code> to install the parser.</p>
+
+<h2>Configuration</h2>
+
+<p><a href="http://www.christian-seiler.de/projekte/php/bbcode/index_en.html">StringParser_BBCode</a> comes with many different options about how
+to configure it, letting you specify which BBCode tags should be allowed
+and what they will be transformed into.</p>
+
+<p>We will need to set up a service called <code>BBCodeParser</code> that implements
+<a href="https://github.com/FriendsOfSymfony/FOSCommentBundle/blob/master/Markup/ParserInterface.php">ParserInterface</a> from FOSCommentBundle, which has a single method,
+<code>parse</code>. We will use the service we implement to configure our
+StringParser_BBCode class, but you can use whatever method you&#8217;d like to
+get an instance of StringParser_BBCode into our new <code>BBCodeParser</code>.</p>
+
+<p>Our example set up will enable [B] and [I] BBCodes, if you need more take
+a look at the documentation provided by <a href="http://www.christian-seiler.de/projekte/php/bbcode/index_en.html">StringParser_BBCode</a>, there
+are more examples provided there.</p>
+
+<p>Below is an example implementation of <code>BBCodeParser</code>, a class that will
+need to be placed inside a bundle in your application. Generally, an
+application will need to have an AppBundle to implement bits and pieces
+required for other bundles.</p>
+
+<div><script src='https://gist.github.com/1948617.js?file=BBCode.php'></script>
+<noscript><pre><code>&lt;?php
+
+namespace Test\CommentBundle\Markup;
+
+use FOS\CommentBundle\Markup\ParserInterface;
+use HTMLPurifier;
+
+class BBCode implements ParserInterface
+{
+    private $parser;
+    private $purifier;
+
+    public function __construct(HtmlPurifier $purifier)
+    {
+        $this-&gt;purifier = $purifier;
+    }
+
+    /**
+     * @return \StringParser_BBCode
+     */
+    protected function getParser()
+    {
+        if (null === $this-&gt;parser) {
+            $parser = new \StringParser_BBCode();
+            $parser-&gt;setRootParagraphHandling(true);
+
+            /**
+             * Bold
+             *
+             * [b][/b] -&gt; &lt;b&gt;&lt;/b&gt;
+             */
+            $parser-&gt;addCode('b', 'simple_replace', null, array(
+                'start_tag' =&gt; '&lt;b&gt;',
+                'end_tag' =&gt; '&lt;/b&gt;'
+            ), 'inline', array('listitem', 'block', 'inline', 'link'), array());
+
+            /**
+             * Italics
+             *
+             * [i][/i] -&gt; &lt;i&gt;&lt;/i&gt;
+             */
+            $parser-&gt;addCode('i', 'simple_replace', null, array(
+                'start_tag' =&gt; '&lt;i&gt;',
+                'end_tag' =&gt; '&lt;/i&gt;'
+            ), 'inline', array('listitem', 'block', 'inline', 'link'), array());
+
+            $this-&gt;parser = $parser;
+        }
+
+        return $this-&gt;parser;
+    }
+
+    /**
+     * Takes a markup string and returns raw html.
+     *
+     * @param string $raw
+     *
+     * @return string
+     */
+    public function parse($raw)
+    {
+        $raw = $this-&gt;purifier-&gt;purify($raw);
+
+        return $this-&gt;getParser()-&gt;parse($raw);
+    }
+}</code></pre></noscript></div>
+
+
+<p>Once you&#8217;ve got your <code>BBCoderParser</code> set up the way you want it, you need
+to configure the Symfony2 container to tell it about the parser, and let
+FOSCommentBundle know about it.</p>
+
+<p>The configuration example below sets up the ExerciseHTMLPurifier to
+disallow all HTML, combined with the Parser above, will remove all HTML
+and then convert the BBCode to HTML.</p>
+
+<blockquote><p><strong>Security Risk</strong></p>
+
+<p>You must be careful with the HTMLPurifier configuration so that
+no unexpected HTML gets through the parser. You may expose your website
+to XSS attacks if not properly configured.</p></blockquote>
+
+<div><script src='https://gist.github.com/1948617.js?file=config.yml'></script>
+<noscript><pre><code>exercise_html_purifier:
+    bbcode:
+        HTML.Allowed: ''
+
+fos_comment:
+    service:
+        markup: markup.bbcode
+
+services:
+    markup.bbcode:
+        class: Test\CommentBundle\Markup\BBCode
+        arguments:
+            - @exercise_html_purifier.bbcode</code></pre></noscript></div>
+
+
+<p>And you&#8217;re done. Any comments created from this point onwards will be parsed
+for BBCode and that will be converted to the HTML you&#8217;ve specified.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tim Nagel</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-04T16:50:00+10:00" pubdate data-updated="true">May 4<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/comment-bundle/'>comment-bundle</a>, <a class='category' href='/blog/categories/symfony2/'>symfony2</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle" data-via="merkofoz" data-counturl="http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>Senior PHP Programmer at <a href="http://www.infinite.net.au">Infinite Networks</a>, an Australian ISP and development company.</p>
+
+  <p>I run a local Australian Team Fortress 2 community, <a href="http://ozfortress.com">ozfortress</a> in my spare time.</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle">Enabling BBCode parsing in FOSCommentBundle</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/merk">@merk</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'merk',
+            count: 3,
+            skip_forks: false,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("merkofoz", 2, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/merkofoz" class="twitter-follow-button" data-show-count="false">Follow @merkofoz</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Tim Nagel -
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
