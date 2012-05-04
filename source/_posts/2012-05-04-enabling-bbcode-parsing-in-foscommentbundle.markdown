@@ -78,7 +78,24 @@ required for other bundles.
 
 {% gist 1948617 BBCode.php %}
 
+Once you've got your `BBCoderParser` set up the way you want it, you need
+to configure the Symfony2 container to tell it about the parser, and let
+FOSCommentBundle know about it.
+
+The configuration example below sets up the ExerciseHTMLPurifier to
+disallow all HTML, combined with the Parser above, will remove all HTML
+and then convert the BBCode to HTML.
+
+> **Security Risk**
+>
+> You must be careful with the HTMLPurifier configuration so that
+> no unexpected HTML gets through the parser. You may expose your website
+> to XSS attacks if not properly configured.
+
 {% gist 1948617 config.yml %}
+
+And you're done. Any comments created from this point onwards will be parsed
+for BBCode and that will be converted to the HTML you've specified.
 
 [ExerciseHTMLPurifierBundle]: https://github.com/Exercise/HTMLPurifierBundle
 [StringParser_BBCode]: http://www.christian-seiler.de/projekte/php/bbcode/index_en.html
