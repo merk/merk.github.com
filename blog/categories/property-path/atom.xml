@@ -4,7 +4,7 @@
   <title><![CDATA[Category: property-path | Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/blog/categories/property-path/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-05-15T19:11:03+10:00</updated>
+  <updated>2012-05-15T19:13:18+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -39,6 +39,9 @@ Symfony2 Form component.</p>
 <p>The PropertyPath utility provides more advanced functionality, which will
 search for a getter, isser or hasser method, then fall back to trying to
 access the property itself.</p>
+
+<!-- more -->
+
 
 <p>Consider the following object:</p>
 
