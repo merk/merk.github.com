@@ -25,6 +25,8 @@ The PropertyPath utility provides more advanced functionality, which will
 search for a getter, isser or hasser method, then fall back to trying to
 access the property itself.
 
+<!-- more -->
+
 Consider the following object:
 
 {% codeblock lang:php %}

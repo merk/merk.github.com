@@ -18,6 +18,8 @@ Another option is to slowly migrate features only a few at a time
 while introducing tests to make sure that you're not breaking any
 front-end functionality.
 
+<!-- more -->
+
 In this series of articles, I'm going to document my journey of
 migrating an 8 year old vBulletin based application that currently
 runs my hobby website [ozfortress][]. My plan is to slowly migrate
