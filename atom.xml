@@ -4,7 +4,7 @@
   <title><![CDATA[Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-05-04T21:17:19+10:00</updated>
+  <updated>2012-05-15T19:11:03+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -12,6 +12,235 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[A Symfony2 migration - Part 1]]></title>
+    <link href="http://tim.nagel.com.au/symfony2/ozfortress/a-symfony2-migration-part-1"/>
+    <updated>2012-05-15T18:23:00+10:00</updated>
+    <id>http://tim.nagel.com.au/symfony2/ozfortress/a-symfony2-migration-part-1</id>
+    <content type="html"><![CDATA[<p>In almost every situation, developers will always prefer to create
+a brand new application rather than migrate a legacy application.
+When you migrate an application, there is a large amount of baggage
+that needs to be accounted for which means that you may end up
+spending a large amount of time dealing with the legacy baggage.</p>
+
+<p>On top of this, sometimes applications can be so large that it can
+be almost impossible to rewrite the entire application in one go.
+Another option is to slowly migrate features only a few at a time
+while introducing tests to make sure that you&#8217;re not breaking any
+front-end functionality.</p>
+
+<p>In this series of articles, I&#8217;m going to document my journey of
+migrating an 8 year old vBulletin based application that currently
+runs my hobby website <a href="http://ozfortress.com">ozfortress</a>. My plan is to slowly migrate
+features to Symfony2 while leaving the legacy vBulletin application
+to handle most of the sites features until I find time and
+motivation to rewrite each discreet piece of functionality into a
+Symfony2 bundle.</p>
+
+<h2>Migration Method</h2>
+
+<p>Having chatted with many people about methods for migrating and
+how to handle which part of the site is handled by which part
+of the application, legacy or new.</p>
+
+<h3>Symfony2 Routing</h3>
+
+<p>The first method that can be used is sending every request through
+the Symfony kernel, letting the router decide which requests should
+go to a special <code>LegacyController</code> which will pass off the request
+to the legacy application.</p>
+
+<p>This method is great because it allows you to configure the routing
+of the entire application inside the Symfony router and not have it
+mixed throughout the new and old systems.</p>
+
+<p>Be aware however that this method means loading the Kernel and its
+hard depenedencies, followed by the router and any other Symfony
+systems for every request which will add overhead to the legacy
+parts of your application.</p>
+
+<h3>Falling back to Symfony2</h3>
+
+<p>Another method which will use some webserver configuration to only
+use the Symfony2 kernel when the request doesnt match an existing
+file path on the filesystem.</p>
+
+<p>The method needs very little custom configuration as the default
+<code>.htaccess</code> file follows this logic already.</p>
+
+<p>The benefit of this method is that the Symfony2 system will not be
+initialised unless it is needed or if there is a 404 response
+required.</p>
+
+<h3>Including parts using ESI</h3>
+
+<p>Another option in the toolkit, while not specifically intended to
+be a complete solution to migration is using a reverse proxy that
+supports <a href="http://en.wikipedia.org/wiki/Edge_Side_Includes">ESI</a> like Varnish that will let you include ESI tags
+in the output of your legacy application where you want content
+from the new application to be placed.</p>
+
+<p>The advantage with using this method is that combined with either
+of the above methods that you can include partial new functions
+inside pages of the old application as you migrate them.</p>
+
+<h2>Next</h2>
+
+<p>In the next article, I will cover setting up an environment that
+supports falling back to Symfony2 with ESI capabilities, along
+with a strategy for sharing user sessions between the applications.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using PropertyPath on your own objects]]></title>
+    <link href="http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects"/>
+    <updated>2012-05-11T00:00:00+10:00</updated>
+    <id>http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects</id>
+    <content type="html"><![CDATA[<p>Something that comes up every so often is how to convert the name of
+a property into a getter or setter, and generally the solution proposed
+is something like the following.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$accessor</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span> <span class="o">.</span> <span class="nb">ucfirst</span><span class="p">(</span><span class="nv">$property</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$object</span><span class="o">-&gt;</span><span class="nv">$accessor</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>While this might be an acceptable method, there are more elegant solutions,
+one of which is using the <a href="https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Form/Util/PropertyPath.php">PropertyPath</a> utility provided by the
+Symfony2 Form component.</p>
+
+<p>The PropertyPath utility provides more advanced functionality, which will
+search for a getter, isser or hasser method, then fall back to trying to
+access the property itself.</p>
+
+<p>Consider the following object:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Bar</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nv">$patrons</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$closed</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * Is the bar closed?</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">isClosed</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">closed</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * Returns the number of patrons at the bar</span>
+</span><span class='line'><span class="sd">     * unless it is closed.</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPatrons</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">closed</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">patrons</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ... more cool stuff ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Should you need to access information on this object without knowing in
+advance which properties you&#8217;d like to call, PropertyPath can help you out.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Form\Util\PropertyPath</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$bar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bar</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * Check if the bar is closed, using isClosed</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="nv">$property</span> <span class="o">=</span> <span class="s1">&#39;closed&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$path</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PropertyPath</span><span class="p">(</span><span class="nv">$property</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$closed</span> <span class="o">=</span> <span class="nv">$path</span><span class="o">-&gt;</span><span class="na">getValue</span><span class="p">(</span><span class="nv">$bar</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * How many patrons are in attendance?</span>
+</span><span class='line'><span class="sd"> *</span>
+</span><span class='line'><span class="sd"> * Will return the number of patrons or 0 if the bar</span>
+</span><span class='line'><span class="sd"> * is closed.</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="nv">$property</span> <span class="o">=</span> <span class="s1">&#39;patrons&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$path</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PropertyPath</span><span class="p">(</span><span class="nv">$property</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$patrons</span> <span class="o">=</span> <span class="nv">$path</span><span class="o">-&gt;</span><span class="na">getValue</span><span class="p">(</span><span class="nv">$bar</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Chaining calls</h2>
+
+<p>Another feature of the PropertyPath utility is that it will let you
+chain calls down an object graph. Consider you wanted to make a call
+that would be converted to <code>$bar-&gt;getPatrons()-&gt;getFirst()-&gt;getName()</code>,
+you could use the property path <code>patrons.first.name</code> when constructing
+the PropertyPath.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Enabling BBCode parsing in FOSCommentBundle]]></title>

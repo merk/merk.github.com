@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Tim Nagel</title>
+  <title>Using PropertyPath on your own objects - Tim Nagel</title>
   <meta name="author" content="Tim Nagel">
 
   
-  <meta name="description" content="In almost every situation, developers will always prefer to create
-a brand new application rather than migrate a legacy application.
-When you migrate &hellip;">
+  <meta name="description" content="Something that comes up every so often is how to convert the name of
+a property into a getter or setter, and generally the solution proposed
+is &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@ When you migrate &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tim.nagel.com.au">
+  <link rel="canonical" href="http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -77,122 +77,12 @@ When you migrate &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/symfony2/ozfortress/a-symfony2-migration-part-1">A Symfony2 Migration - Part 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-15T18:23:00+10:00" pubdate data-updated="true">May 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In almost every situation, developers will always prefer to create
-a brand new application rather than migrate a legacy application.
-When you migrate an application, there is a large amount of baggage
-that needs to be accounted for which means that you may end up
-spending a large amount of time dealing with the legacy baggage.</p>
-
-<p>On top of this, sometimes applications can be so large that it can
-be almost impossible to rewrite the entire application in one go.
-Another option is to slowly migrate features only a few at a time
-while introducing tests to make sure that you&#8217;re not breaking any
-front-end functionality.</p>
-
-<p>In this series of articles, I&#8217;m going to document my journey of
-migrating an 8 year old vBulletin based application that currently
-runs my hobby website <a href="http://ozfortress.com">ozfortress</a>. My plan is to slowly migrate
-features to Symfony2 while leaving the legacy vBulletin application
-to handle most of the sites features until I find time and
-motivation to rewrite each discreet piece of functionality into a
-Symfony2 bundle.</p>
-
-<h2>Migration Method</h2>
-
-<p>Having chatted with many people about methods for migrating and
-how to handle which part of the site is handled by which part
-of the application, legacy or new.</p>
-
-<h3>Symfony2 Routing</h3>
-
-<p>The first method that can be used is sending every request through
-the Symfony kernel, letting the router decide which requests should
-go to a special <code>LegacyController</code> which will pass off the request
-to the legacy application.</p>
-
-<p>This method is great because it allows you to configure the routing
-of the entire application inside the Symfony router and not have it
-mixed throughout the new and old systems.</p>
-
-<p>Be aware however that this method means loading the Kernel and its
-hard depenedencies, followed by the router and any other Symfony
-systems for every request which will add overhead to the legacy
-parts of your application.</p>
-
-<h3>Falling back to Symfony2</h3>
-
-<p>Another method which will use some webserver configuration to only
-use the Symfony2 kernel when the request doesnt match an existing
-file path on the filesystem.</p>
-
-<p>The method needs very little custom configuration as the default
-<code>.htaccess</code> file follows this logic already.</p>
-
-<p>The benefit of this method is that the Symfony2 system will not be
-initialised unless it is needed or if there is a 404 response
-required.</p>
-
-<h3>Including parts using ESI</h3>
-
-<p>Another option in the toolkit, while not specifically intended to
-be a complete solution to migration is using a reverse proxy that
-supports <a href="http://en.wikipedia.org/wiki/Edge_Side_Includes">ESI</a> like Varnish that will let you include ESI tags
-in the output of your legacy application where you want content
-from the new application to be placed.</p>
-
-<p>The advantage with using this method is that combined with either
-of the above methods that you can include partial new functions
-inside pages of the old application as you migrate them.</p>
-
-<h2>Next</h2>
-
-<p>In the next article, I will cover setting up an environment that
-supports falling back to Symfony2 with ESI capabilities, along
-with a strategy for sharing user sessions between the applications.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/symfony2/property-path/using-propertypath-on-your-own-objects">Using PropertyPath on Your Own Objects</a></h1>
+      <h1 class="entry-title">Using PropertyPath on Your Own Objects</h1>
     
     
       <p class="meta">
@@ -215,7 +105,7 @@ with a strategy for sharing user sessions between the applications.</p>
   </header>
 
 
-  <div class="entry-content"><p>Something that comes up every so often is how to convert the name of
+<div class="entry-content"><p>Something that comes up every so often is how to convert the name of
 a property into a getter or setter, and generally the solution proposed
 is something like the following.</p>
 
@@ -357,22 +247,16 @@ that would be converted to <code>$bar-&gt;getPatrons()-&gt;getFirst()-&gt;getNam
 you could use the property path <code>patrons.first.name</code> when constructing
 the PropertyPath.</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle">Enabling BBCode Parsing in FOSCommentBundle</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tim Nagel</span></span>
+
+      
 
 
 
@@ -384,41 +268,40 @@ the PropertyPath.</p>
   
 
 
-<time datetime="2012-05-04T16:50:00+10:00" pubdate data-updated="true">May 4<span>th</span>, 2012</time>
-        
-      </p>
+<time datetime="2012-05-11T00:00:00+10:00" pubdate data-updated="true">May 11<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/property-path/'>property-path</a>, <a class='category' href='/blog/categories/symfony2/'>symfony2</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects" data-via="merkofoz" data-counturl="http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects" >Tweet</a>
+  
+  
+  
+</div>
 
-
-  <div class="entry-content"><p>FOSCommentBundle recently added functionality that allows you
-to use some kind of markup parser to let your users post more
-than just plain text comments. The way it is implemented allows
-the developer to choose which parser for whatever language they
-desire.</p>
-
-<p>In this article, we assume you are using Symfony2.0 with the
-deps file and bin/vendor management. For Symfony2.1 users, you
-are able to replace the parts of the instructions with composer,
-which is beyond the scope of this article.</p>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle" title="Previous Post: Enabling BBCode parsing in FOSCommentBundle">&laquo; Enabling BBCode parsing in FOSCommentBundle</a>
+      
+      
+        <a class="basic-alignment right" href="/symfony2/ozfortress/a-symfony2-migration-part-1" title="Next Post: A Symfony2 migration - Part 1">A Symfony2 migration - Part 1 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -427,11 +310,29 @@ which is beyond the scope of this article.</p>
 
   <p>In my spare time I run a local Australian Team Fortress 2 community: <a href="http://ozfortress.com">ozfortress</a>.</p>
 </section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/symfony2/ozfortress/a-symfony2-migration-part-1">A Symfony2 migration - Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/symfony2/property-path/using-propertypath-on-your-own-objects">Using PropertyPath on your own objects</a>
+      </li>
+    
+      <li class="post">
+        <a href="/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle">Enabling BBCode parsing in FOSCommentBundle</a>
+      </li>
+    
+  </ul>
+</section>
 
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/merk">@merk</a> on GitHub
@@ -461,7 +362,7 @@ which is beyond the scope of this article.</p>
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -477,6 +378,7 @@ which is beyond the scope of this article.</p>
 
   
 </aside>
+
 
     </div>
   </div>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ozfortress | Tim Nagel]]></title>
+  <link href="http://tim.nagel.com.au/blog/categories/ozfortress/atom.xml" rel="self"/>
+  <link href="http://tim.nagel.com.au/"/>
+  <updated>2012-05-15T19:11:03+10:00</updated>
+  <id>http://tim.nagel.com.au/</id>
+  <author>
+    <name><![CDATA[Tim Nagel]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A Symfony2 migration - Part 1]]></title>
+    <link href="http://tim.nagel.com.au/symfony2/ozfortress/a-symfony2-migration-part-1"/>
+    <updated>2012-05-15T18:23:00+10:00</updated>
+    <id>http://tim.nagel.com.au/symfony2/ozfortress/a-symfony2-migration-part-1</id>
+    <content type="html"><![CDATA[<p>In almost every situation, developers will always prefer to create
+a brand new application rather than migrate a legacy application.
+When you migrate an application, there is a large amount of baggage
+that needs to be accounted for which means that you may end up
+spending a large amount of time dealing with the legacy baggage.</p>
+
+<p>On top of this, sometimes applications can be so large that it can
+be almost impossible to rewrite the entire application in one go.
+Another option is to slowly migrate features only a few at a time
+while introducing tests to make sure that you're not breaking any
+front-end functionality.</p>
+
+<p>In this series of articles, I'm going to document my journey of
+migrating an 8 year old vBulletin based application that currently
+runs my hobby website <a href="http://ozfortress.com">ozfortress</a>. My plan is to slowly migrate
+features to Symfony2 while leaving the legacy vBulletin application
+to handle most of the sites features until I find time and
+motivation to rewrite each discreet piece of functionality into a
+Symfony2 bundle.</p>
+
+<h2>Migration Method</h2>
+
+<p>Having chatted with many people about methods for migrating and
+how to handle which part of the site is handled by which part
+of the application, legacy or new.</p>
+
+<h3>Symfony2 Routing</h3>
+
+<p>The first method that can be used is sending every request through
+the Symfony kernel, letting the router decide which requests should
+go to a special <code>LegacyController</code> which will pass off the request
+to the legacy application.</p>
+
+<p>This method is great because it allows you to configure the routing
+of the entire application inside the Symfony router and not have it
+mixed throughout the new and old systems.</p>
+
+<p>Be aware however that this method means loading the Kernel and its
+hard depenedencies, followed by the router and any other Symfony
+systems for every request which will add overhead to the legacy
+parts of your application.</p>
+
+<h3>Falling back to Symfony2</h3>
+
+<p>Another method which will use some webserver configuration to only
+use the Symfony2 kernel when the request doesnt match an existing
+file path on the filesystem.</p>
+
+<p>The method needs very little custom configuration as the default
+<code>.htaccess</code> file follows this logic already.</p>
+
+<p>The benefit of this method is that the Symfony2 system will not be
+initialised unless it is needed or if there is a 404 response
+required.</p>
+
+<h3>Including parts using ESI</h3>
+
+<p>Another option in the toolkit, while not specifically intended to
+be a complete solution to migration is using a reverse proxy that
+supports <a href="http://en.wikipedia.org/wiki/Edge_Side_Includes">ESI</a> like Varnish that will let you include ESI tags
+in the output of your legacy application where you want content
+from the new application to be placed.</p>
+
+<p>The advantage with using this method is that combined with either
+of the above methods that you can include partial new functions
+inside pages of the old application as you migrate them.</p>
+
+<h2>Next</h2>
+
+<p>In the next article, I will cover setting up an environment that
+supports falling back to Symfony2 with ESI capabilities, along
+with a strategy for sharing user sessions between the applications.</p>
+]]></content>
+  </entry>
+  
+</feed>
