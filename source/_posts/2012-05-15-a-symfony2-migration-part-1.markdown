@@ -33,7 +33,9 @@ Migration Method
 
 Having chatted with many people about methods for migrating and
 how to handle which part of the site is handled by which part
-of the application, legacy or new.
+of the application, legacy or new. Below, I'll cover a few basic
+methods that can be used to cope with setting up a migration
+environment.
 
 ### Symfony2 Routing
 
