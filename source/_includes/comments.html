@@ -1,0 +1,22 @@
+{% comment %} Load comments {% endcomment %}
+{% if site.comment_server_url and page.comments != false %}
+<script type="text/javascript">
+
+// thread id
+var fos_comment_thread_id = 'merk{{ page.url }}'.replace(/\//g,'-');
+var fos_comment_thread_api_base_url = '{{ site.comment_server_url }}{{ site.comment_server_url_api }}';
+var fos_comment_remote_cors_url = 'http:{{ site.comment_server_url }}/cors/index.html';
+var fos_comment_thread_container = jQuery('#comments');
+
+// Snippet for asynchronously loading the comments
+(function() {
+    var fos_comment_script = document.createElement('script');
+    fos_comment_script.async = true;
+    fos_comment_script.src = '{{ site.comment_server_url }}/js/embed.js';
+    fos_comment_script.type = 'text/javascript';
+
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(fos_comment_script);
+})();
+
+</script>
+{% endif %}

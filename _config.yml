@@ -89,6 +89,9 @@ delicious_count: 3
 disqus_short_name:
 disqus_show_comment_count: false
 
+comment_server_url: //comments.nagel.com.au
+comment_server_url_api: /comment/threads
+
 # Google Analytics
 google_analytics_tracking_id: UA-31402211-1
 
