@@ -7,7 +7,7 @@ categories: [symfony2, doctrine2]
 ---
 
 Since version 2.2.0, Doctrine ships with a really handy listener,
-`ResolveTargetEntityListener` that lets you keep your bundles separated,
+[ResolveTargetEntityListener][] that lets you keep your bundles separated,
 while still letting you define loose relationships between different
 entities.
 
@@ -18,6 +18,10 @@ have relationships between them, but not defining dependencies between
 those bundles.
 
 <!-- more -->
+
+> Note that because of the version of Doctrine2 that this listener ships
+> with, you will need to be using Symfony2.1 or upgrade your Doctrine
+> version used in a Symfony2.0 project.
 
 Background
 ----------
@@ -59,3 +63,5 @@ With the ResolveTargetEntityListener, we are able to decouple our
 bundles, keeping them usable by themselves, but still being able to
 define relationships between different objects. By using this method,
 I've found my bundles end up being easier to maintain independently.
+
+[ResolveTargetEntityListener]: https://github.com/doctrine/doctrine2/blob/master/lib/Doctrine/ORM/Tools/ResolveTargetEntityListener.php
