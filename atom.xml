@@ -4,7 +4,7 @@
   <title><![CDATA[Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-06-06T22:54:19+10:00</updated>
+  <updated>2012-06-06T22:58:17+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -33,8 +33,7 @@ those bundles.</p>
 
 
 <blockquote><p>Note that because of the version of Doctrine2 that this listener ships
-with, you will need to be using Symfony2.1 or upgrade your Doctrine
-version used in a Symfony2.0 project.</p></blockquote>
+with, you will need to be using Symfony2.1.</p></blockquote>
 
 <h2>Background</h2>
 
