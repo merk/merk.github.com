@@ -26,11 +26,16 @@ those bundles.
 Background
 ----------
 
-In the following example, the situation is we have an InvoiceBundle
-which provides invoicing functionality, and a CustomerBundle that
+In the following example, the situation is we have an `InvoiceBundle`
+which provides invoicing functionality, and a `CustomerBundle` that
 contains customer management tools. We want to keep these separated,
 because they can be used in other systems without each other, but for
 our application we want to use them together.
+
+In this case, we have an `Invoice` entity with a relationship to a
+non-existant object, an `InvoiceSubjectInterface`. The goal is to get
+the `ResolveTargetEntityListener` to replace any mention of the interface
+with a real object that implements that interface.
 
 Set up
 ------
@@ -59,7 +64,7 @@ implementation to point the relationship to.
 Final Thoughts
 --------------
 
-With the ResolveTargetEntityListener, we are able to decouple our
+With the `ResolveTargetEntityListener`, we are able to decouple our
 bundles, keeping them usable by themselves, but still being able to
 define relationships between different objects. By using this method,
 I've found my bundles end up being easier to maintain independently.
