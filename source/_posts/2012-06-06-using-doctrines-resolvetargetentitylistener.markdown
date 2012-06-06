@@ -21,8 +21,7 @@ those bundles.
 <!-- more -->
 
 > Note that because of the version of Doctrine2 that this listener ships
-> with, you will need to be using Symfony2.1 or upgrade your Doctrine
-> version used in a Symfony2.0 project.
+> with, you will need to be using Symfony2.1.
 
 Background
 ----------
