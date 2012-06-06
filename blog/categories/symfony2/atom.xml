@@ -4,7 +4,7 @@
   <title><![CDATA[Category: symfony2 | Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/blog/categories/symfony2/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-06-06T22:27:24+10:00</updated>
+  <updated>2012-06-06T22:54:19+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -1891,41 +1891,8 @@ I think you should use an
 </code></pre></noscript></div>
 </p>
 
-<p>Next, we've got to set up the listener itself. Unfortunately, it does
-not provide an easy way to set it up, and we need to extend it to add
-the ability to pass the configuration through the constructor rather
-than having to set up the DIC for many method calls.</p>
-
-<p><div><script src='https://gist.github.com/2881235.js?file=ResolveTargetEntityListener.php'></script>
-<noscript><pre><code>&lt;?php
-
-// src/Infinite/Helper/ResolveTargetEntityListener.php
-
-namespace Infinite\Helper;
-
-use Doctrine\ORM\Tools\ResolveTargetEntityListener as BaseResolveTargetEntityListener;
-
-/**
- * An extended ResolveTargetEntityListener that lets us pass an array
- * of targets to the constructor.
- *
- * @author Tim Nagel &lt;tim@nagel.com.au&gt;
- */
-class ResolveTargetEntityListener extends BaseResolveTargetEntityListener
-{
-    public function __construct(array $map = array())
-    {
-        foreach ($map as $original =&gt; $new) {
-            $this-&gt;addResolveTargetEntity($original, $new, array());
-        }
-    }
-}</code></pre></noscript></div>
-</p>
-
-<p>And finally, we need to configure the listener. The entity_map
-parameter takes a key value array, with the key being the interface
-or base class to replace and the value being the concrete
-implementation to point the relationship to.</p>
+<p>Next, we need to configure the listener. DoctrineBundle lets us configure
+the listener</p>
 
 <p><div><script src='https://gist.github.com/2881235.js?file=config.yml'></script>
 <noscript><pre><code># ....

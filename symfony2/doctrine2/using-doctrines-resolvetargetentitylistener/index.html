@@ -98,6 +98,8 @@ while still &hellip;">
   
 
 
+
+  
 <time datetime="2012-06-06T20:19:00+10:00" pubdate data-updated="true">Jun 6<span>th</span>, 2012</time>
         
       </p>
@@ -1984,41 +1986,8 @@ I think you should use an
 </code></pre></noscript></div>
 
 
-<p>Next, we&#8217;ve got to set up the listener itself. Unfortunately, it does
-not provide an easy way to set it up, and we need to extend it to add
-the ability to pass the configuration through the constructor rather
-than having to set up the DIC for many method calls.</p>
-
-<div><script src='https://gist.github.com/2881235.js?file=ResolveTargetEntityListener.php'></script>
-<noscript><pre><code>&lt;?php
-
-// src/Infinite/Helper/ResolveTargetEntityListener.php
-
-namespace Infinite\Helper;
-
-use Doctrine\ORM\Tools\ResolveTargetEntityListener as BaseResolveTargetEntityListener;
-
-/**
- * An extended ResolveTargetEntityListener that lets us pass an array
- * of targets to the constructor.
- *
- * @author Tim Nagel &lt;tim@nagel.com.au&gt;
- */
-class ResolveTargetEntityListener extends BaseResolveTargetEntityListener
-{
-    public function __construct(array $map = array())
-    {
-        foreach ($map as $original =&gt; $new) {
-            $this-&gt;addResolveTargetEntity($original, $new, array());
-        }
-    }
-}</code></pre></noscript></div>
-
-
-<p>And finally, we need to configure the listener. The entity_map
-parameter takes a key value array, with the key being the interface
-or base class to replace and the value being the concrete
-implementation to point the relationship to.</p>
+<p>Next, we need to configure the listener. DoctrineBundle lets us configure
+the listener</p>
 
 <div><script src='https://gist.github.com/2881235.js?file=config.yml'></script>
 <noscript><pre><code># ....
@@ -2068,7 +2037,9 @@ I&#8217;ve found my bundles end up being easier to maintain independently.</p>
   
 
 
-<time datetime="2012-06-06T20:19:00+10:00" pubdate data-updated="true">Jun 6<span>th</span>, 2012</time>
+
+  
+<time datetime="2012-06-06T23:01:00+10:00" class="updated">Updated Jun 6<span>th</span>, 2012</time>
       
 
 <span class="categories">
