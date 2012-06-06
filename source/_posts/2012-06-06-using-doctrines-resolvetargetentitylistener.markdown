@@ -2,6 +2,7 @@
 layout: post
 title: "Using Doctrine's ResolveTargetEntityListener"
 date: 2012-06-06 20:19
+updated: 2012-06-06 23:01
 comments: true
 categories: [symfony2, doctrine2]
 ---
@@ -47,17 +48,8 @@ for brevity) to explain how to set up and use the RTEL.
 {% gist 2881235 Invoice.php %}
 {% gist 2881235 InvoiceSubjectInterface.php %}
 
-Next, we've got to set up the listener itself. Unfortunately, it does
-not provide an easy way to set it up, and we need to extend it to add
-the ability to pass the configuration through the constructor rather
-than having to set up the DIC for many method calls.
-
-{% gist 2881235 ResolveTargetEntityListener.php %}
-
-And finally, we need to configure the listener. The entity_map
-parameter takes a key value array, with the key being the interface
-or base class to replace and the value being the concrete
-implementation to point the relationship to.
+Next, we need to configure the listener. DoctrineBundle lets us configure
+the listener
 
 {% gist 2881235 config.yml %}
 
