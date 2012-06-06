@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ozfortress | Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/blog/categories/ozfortress/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-05-15T19:13:18+10:00</updated>
+  <updated>2012-06-06T22:17:39+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -45,7 +45,9 @@ Symfony2 bundle.</p>
 
 <p>Having chatted with many people about methods for migrating and
 how to handle which part of the site is handled by which part
-of the application, legacy or new.</p>
+of the application, legacy or new. Below, I'll cover a few basic
+methods that can be used to cope with setting up a migration
+environment.</p>
 
 <h3>Symfony2 Routing</h3>
 

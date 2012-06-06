@@ -9,9 +9,9 @@
   <meta name="author" content="Tim Nagel">
 
   
-  <meta name="description" content="In almost every situation, developers will always prefer to create
-a brand new application rather than migrate a legacy application.
-When you migrate &hellip;">
+  <meta name="description" content="Since version 2.2.0, Doctrine ships with a really handy listener,
+ResolveTargetEntityListener that lets you keep your bundles separated,
+while still &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,56 @@ When you migrate &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/symfony2/doctrine2/using-doctrines-resolvetargetentitylistener">Using Doctrine&#8217;s ResolveTargetEntityListener</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-06T20:19:00+10:00" pubdate data-updated="true">Jun 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Since version 2.2.0, Doctrine ships with a really handy listener,
+<a href="https://github.com/doctrine/doctrine2/blob/master/lib/Doctrine/ORM/Tools/ResolveTargetEntityListener.php">ResolveTargetEntityListener</a> that lets you keep your bundles separated,
+while still letting you define loose relationships between different
+entities.</p>
+
+<p>What this listener allows you to do is define a relationship target in
+your entities that will be replaced at runtime. This becomes very useful
+when you&#8217;ve got different bundles doing different things, and want to
+have relationships between them, but not defining dependencies between
+those bundles.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/symfony2/doctrine2/using-doctrines-resolvetargetentitylistener">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
