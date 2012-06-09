@@ -2,11 +2,6 @@
 // Add styles here to make changes without digging in too much
 
 .fos_comment_comment_form_holder {
-  .meta {
-    float: left;
-    width: 30%;
-  }
-
   padding-bottom: 0.5em;
 }
 
@@ -21,6 +16,11 @@
 }
 
 .comments {
+  .meta {
+    float: left;
+    width: 30%;
+  }
+
   article {
     clear: right;
 
@@ -57,4 +57,26 @@
       margin-left: 1em;
     }
   }
+}
+
+#login_box {
+  a {
+    @include text-shadow(rgba(255,255,255,0.75) 0 1px 1px);
+    @include border-radius(4px);
+    @include box-shadow(rgba(255,255,255,0.2) 0 1px 0 inset, rgba(0,0,0,0.05) 0 1px 2px);
+
+    background: $sidebar-bg;
+    border: 1px solid $sidebar-border;
+    border-bottom: 1px solid $sidebar-border-hover;
+    display: inline-block;
+    padding: 4px 10px 4px;
+    font-size: 13px;
+    line-height: 18px;
+    margin-right: 1em;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  }
+
+  margin-bottom: 1em;
+  margin-left: 32%;
+  width: 68%;
 }
