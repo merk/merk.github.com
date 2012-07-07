@@ -9,9 +9,9 @@
   <meta name="author" content="Tim Nagel">
 
   
-  <meta name="description" content="Since version 2.2.0, Doctrine ships with a really handy listener,
-ResolveTargetEntityListener that lets you keep your bundles separated,
-while still &hellip;">
+  <meta name="description" content="While creating a system at Infinite*, I came across the requirement that
+we have a form collection that could cope with single table inheritance
+used &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,53 @@ while still &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/symfony2/forms/polycollection-for-symfony2-forms">Polycollection for Symfony2 Forms</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-07T12:48:00+10:00" pubdate data-updated="true">Jul 7<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>While creating a system at Infinite*, I came across the requirement that
+we have a form collection that could cope with single table inheritance
+used by Doctrine2. We have Invoices with many different kinds of lines
+that would reference back to whatever object they were about, but all
+contained common basic parameters common to all invoice lines.</p>
+
+<p>Enter the Polycollection.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/symfony2/forms/polycollection-for-symfony2-forms">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>

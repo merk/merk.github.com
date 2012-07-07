@@ -4,7 +4,7 @@
   <title><![CDATA[Tim Nagel]]></title>
   <link href="http://tim.nagel.com.au/atom.xml" rel="self"/>
   <link href="http://tim.nagel.com.au/"/>
-  <updated>2012-06-26T19:37:54+10:00</updated>
+  <updated>2012-07-07T12:50:42+10:00</updated>
   <id>http://tim.nagel.com.au/</id>
   <author>
     <name><![CDATA[Tim Nagel]]></name>
@@ -12,6 +12,174 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Polycollection for Symfony2 Forms]]></title>
+    <link href="http://tim.nagel.com.au/symfony2/forms/polycollection-for-symfony2-forms"/>
+    <updated>2012-07-07T12:48:00+10:00</updated>
+    <id>http://tim.nagel.com.au/symfony2/forms/polycollection-for-symfony2-forms</id>
+    <content type="html"><![CDATA[<p>While creating a system at Infinite*, I came across the requirement that
+we have a form collection that could cope with single table inheritance
+used by Doctrine2. We have Invoices with many different kinds of lines
+that would reference back to whatever object they were about, but all
+contained common basic parameters common to all invoice lines.</p>
+
+<p>Enter the Polycollection.</p>
+
+<!-- more -->
+
+
+<blockquote><p><strong>Note:</strong>
+It doesnt matter what type of inheritance you use. This example talks
+about Doctrine&#8217;s <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html#single-table-inheritance">Single Table Inheritance</a> but anything will work
+as long as the collection has a common parent.</p></blockquote>
+
+<h2>Basics</h2>
+
+<p>For this blog post, I&#8217;ll describe a limited subset of actual classes
+we&#8217;re using, but you can use as many as you want with this set up.</p>
+
+<p>First up, the structure of the entities we are using is as follows:</p>
+
+<ul>
+<li><code>Invoice#lines</code> is a collection that references a class InvoiceLine.</li>
+<li><code>InvoiceLine</code> is a <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html#single-table-inheritance">Single Table Inheritance</a> entity that defines
+additional line entities we need. (We do this in our
+ImplementationBundle so that we don&#8217;t need to worry about adding
+additional lines to the primary bundle that are not relevant to other
+systems using it)</li>
+<li><code>InvoiceLine</code> is a concrete class that contains our basic <code>InvoiceLine</code>
+which contains a description, quantity and unit price.</li>
+<li><code>InvoiceJobLine</code> extends <code>InvoiceLine</code> and links to a <code>Job</code> entity. We
+override the description getter/setter on this object to proxy them
+through to the <code>Job</code>.</li>
+<li><code>InvoiceProductLine</code> extends <code>InvoiceLine</code> and links to a <code>Product</code>
+entity. We override the description getter/setter as for the <code>Job</code>
+line except in addition we override the getter/setter of the unit
+price to disallow editing of the price and get the price set
+directly on the <code>Product</code>.</li>
+</ul>
+
+
+<h2>Set up</h2>
+
+<p>There is a bundle from Infinite* forthcoming that will contain this and
+other helpers we&#8217;ve created over the course of a few applications. Until
+then, there is a <a href="https://gist.github.com/3058342">gist here</a> that contains the code necessary to set it
+up.</p>
+
+<p>On the primary InvoiceType, we need to pass an option <code>types</code> that contains
+either the string name of types registered in the DIC, or instances of
+<code>FormTypeInterface</code>.</p>
+
+<p>The <code>PolyCollection</code> uses the data_class option of each form type to
+determine which will apply to an object of the collection. In the case where
+there is no type with a matching data class, the <code>PolyCollection</code> will pick
+the first type passed in via the <code>types</code> array. At this time, the
+<code>PolyCollection</code> does not support array types.</p>
+
+<p>Each form type used in the PolyCollection must contain a hidden <code>_type</code>
+field that has the value returned by the form&#8217;s <code>getName</code> function. We&#8217;ve been
+using:</p>
+
+<div><script src='https://gist.github.com/3058342.js?file=AbstractInvoiceLineType.php'></script>
+<noscript><pre><code>&lt;?php
+
+// ...
+
+class AbstractInvoiceLineType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        // ...
+
+        $builder-&gt;add('_type', 'hidden', array(
+            'data'   =&gt; $this-&gt;getName(),
+            'mapped' =&gt; false
+        ));
+    }
+}</code></pre></noscript></div>
+
+
+<p>The definition of the InvoiceType could look something like:</p>
+
+<div><script src='https://gist.github.com/3058342.js?file=InvoiceType.php'></script>
+<noscript><pre><code>&lt;?php
+
+// src/Bundle/Form/Type/InvoiceType.php
+
+// ...
+
+    $builder-&gt;add('lines', 'polycollection', array(
+        'types' =&gt; array(
+            'ibms_invoice_line',
+            'ibms_invoice_part_line',
+        ),
+        'allow_add' =&gt; true,
+        'allow_delete' =&gt; true,
+        'by_reference' =&gt; false
+    ));
+
+// ...</code></pre></noscript></div>
+
+
+<h2>Templates</h2>
+
+<p>Until Infinite* releases the bundle, there isnt any reference javascript
+to use for generating the template HTML, but it is basically the same
+as what is used for a normal collection with prototypes.</p>
+
+<p>An abbreviated copy of the twig template we&#8217;re using:</p>
+
+<div><script src='https://gist.github.com/3058342.js?file=template.html.twig'></script>
+<noscript><pre><code>{% form_theme form.lines _self %}
+{% block form %}
+{# ... #}
+&lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;span12&quot;&gt;
+        &lt;fieldset class=&quot;lines&quot;&gt;
+            &lt;legend&gt;{{ type }} Lines&lt;/legend&gt;
+
+            {{ form_row(form.lines) }}
+        &lt;/fieldset&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{# ... #}
+{% endblock form %}
+
+{% block polycollection_row %}
+&lt;table class=&quot;collection table&quot;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Description
+            &lt;th&gt;Quantity
+            &lt;th&gt;Unit Price
+            &lt;th class=&quot;span2&quot;&gt;Options
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan=&quot;1&quot;&gt;
+            &lt;td colspan=&quot;3&quot;&gt;
+                {% for type, line in form.getVar('prototypes') %}
+                &lt;a class=&quot;add_item btn btn-primary line_{{ type }}&quot; data-prototype=&quot;{{ form_row(line) | escape }}&quot; href=&quot;#&quot;&gt;&lt;i class=&quot;icon-plus icon-white&quot;&gt;&lt;/i&gt; Add {{ type }}&lt;/a&gt;
+                {% endfor %}
+    &lt;tbody class=&quot;items&quot;&gt;
+        {{ form_widget(form) }}
+&lt;/table&gt;
+{% endblock polycollection_row %}
+
+{% block infinite_invoice_line_row %}
+{# HTML for a basic invoice line with description, quantity and price #}
+{% endblock infinite_invoice_line_row %}
+
+{% block infinite_invoice_job_line_row %}
+{# HTML for a job invoice line with job identifier/number and price #}
+{% endblock infinite_invoice_job_line_row %}
+</code></pre></noscript></div>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Doctrine's ResolveTargetEntityListener]]></title>

@@ -4,30 +4,34 @@
         <loc>
             http://tim.nagel.com.au/symfony2/comment-bundle/enabling-bbcode-parsing-in-foscommentbundle
         </loc>
-        <lastmod>2012-06-26T19:31:30+10:00</lastmod>
+        <lastmod>2012-07-07T11:59:29+10:00</lastmod>
     </url>
     <url>
         <loc>
             http://tim.nagel.com.au/symfony2/property-path/using-propertypath-on-your-own-objects
         </loc>
-        <lastmod>2012-06-26T19:31:30+10:00</lastmod>
+        <lastmod>2012-07-07T11:59:29+10:00</lastmod>
     </url>
     <url>
         <loc>http://tim.nagel.com.au/symfony2/ozfortress/a-symfony2-migration-part-1</loc>
-        <lastmod>2012-06-26T19:31:30+10:00</lastmod>
+        <lastmod>2012-07-07T11:59:29+10:00</lastmod>
     </url>
     <url>
         <loc>
             http://tim.nagel.com.au/symfony2/doctrine2/using-doctrines-resolvetargetentitylistener
         </loc>
-        <lastmod>2012-06-26T19:31:30+10:00</lastmod>
+        <lastmod>2012-07-07T11:59:29+10:00</lastmod>
+    </url>
+    <url>
+        <loc>http://tim.nagel.com.au/symfony2/forms/polycollection-for-symfony2-forms</loc>
+        <lastmod>2012-07-07T12:50:29+10:00</lastmod>
     </url>
     <url>
         <loc>http://tim.nagel.com.au/blog/archives/</loc>
-        <lastmod>2012-06-26T19:31:30+10:00</lastmod>
+        <lastmod>2012-07-07T12:50:29+10:00</lastmod>
     </url>
     <url>
         <loc>http://tim.nagel.com.au/</loc>
-        <lastmod>2012-06-26T19:31:14+10:00</lastmod>
+        <lastmod>2012-07-07T12:50:29+10:00</lastmod>
     </url>
 </urlset>
