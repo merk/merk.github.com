@@ -1,1 +1,0 @@
-import{i as e}from"./preload-helper-CT_b8DTk.js";var t,n,r=e((()=>{t=[`#c0392b`,`#e67e22`,`#f1c40f`,`#27ae60`,`#16a085`,`#2980b9`,`#8e44ad`,`#2c3e50`],n={kind:`swatch`,color:`#c0392b`}}));export{t as n,r,n as t};
